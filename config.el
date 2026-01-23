@@ -436,3 +436,14 @@ Version: 2025-02-05"
 
 ;; (after! drag-stuff
 ;;   (drag-stuff-global-mode -1))
+
+;; Add Homebrew paths to Emacs exec-path so it can find zstd and other tools
+(setenv "PATH" (concat "/opt/homebrew/bin:" (getenv "PATH")))
+(add-to-list 'exec-path "/opt/homebrew/bin")
+
+(defun my/vterm-paste-from-clipboard ()
+  "Paste from macOS system clipboard into vterm."
+  (interactive)
+  (vterm-send-string (shell-command-to-string "pbpaste")))
+(with-eval-after-load 'vterm
+  (define-key vterm-mode-map (kbd "s-v") #'my/vterm-paste-from-clipboard))
