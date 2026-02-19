@@ -74,8 +74,9 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
-;; (setq ns-command-modifier 'control)
-;; (setq ns-control-modifier 'super)
+;; Linux: Map kanata's Space-hold (ralt+rctl+rsft) as Hyper
+;; Kanata maps Space-hold to Super (lmet)
+;; Emacs sees s-<key>, no translation needed
 
 ;; Hlissner
 ;;
@@ -109,9 +110,8 @@
 
 (setq doom-scratch-initial-major-mode 'lisp-interaction-mode)
 
-(setq mac-right-option-modifier 'meta)
-;; (setq mac-command-modifier 'super)
-;; (setq mac-control-modifier 'control)
+;; macOS-specific (kept for reference)
+;; (setq mac-right-option-modifier 'meta)
 
 (super-save-mode +1)
 (setq super-save-auto-save-when-idle t)
@@ -128,7 +128,7 @@
 (tool-bar-mode 1)
 (setq evil-emacs-state-cursor  '("purple" bar))
 
-(add-to-list 'exec-path "/opt/homebrew/bin")
+;; (add-to-list 'exec-path "/opt/homebrew/bin") ; macOS only
 
 (use-package ultra-scroll
   ;:load-path "~/code/emacs/ultra-scroll" ; if you git clone'd instead of using vc
@@ -237,9 +237,9 @@
 ;; (global-set-key (kbd "s-c") 'kill-ring-save)
 (map! :nvi "C-e" #'move-end-of-line)
 (setq select-enable-clipboard nil)
-(map! "s-x" #'clipboard-kill-region)
-(map! "s-c" #'clipboard-kill-ring-save)
-(map! "s-v" #'clipboard-yank)
+(map! "s-e x" #'clipboard-kill-region)
+(map! "s-e c" #'clipboard-kill-ring-save)
+(map! "s-e v" #'clipboard-yank)
 ;; (map! "s-g" #'doom/escape)
 ;(map! "s-w" #'kill-current-buffer)
 ;(map! "s-j" #'avy-goto-word-1)
@@ -255,20 +255,25 @@
 (global-set-key (kbd "M-h") 'backward-kill-word)
 (global-set-key (kbd "C-o") 'crux-smart-open-line-above)
 (global-set-key (kbd "C-m") 'crux-smart-open-line)
-(global-set-key (kbd "s-j") 'crux-top-join-line)
-(global-set-key (kbd "s-k") 'crux-kill-whole-line)
-(global-set-key (kbd "s-w") 'kill-current-buffer)
-(global-set-key (kbd "s-t") 'treemacs)
+(global-set-key (kbd "s-e j") 'crux-top-join-line)
+(global-set-key (kbd "s-e k") 'crux-kill-whole-line)
+(global-set-key (kbd "s-e w") 'kill-current-buffer)
+(global-set-key (kbd "s-e t") 'treemacs)
 (global-set-key (kbd "C-'") 'undo-redo)
+(global-set-key (kbd "s-z") 'undo)
+(global-set-key (kbd "C-z") 'undo)
+(global-set-key (kbd "<Back>") 'crux-switch-to-previous-buffer)
+(global-set-key (kbd "<Reload>") 'revert-buffer)
+
 ;; (global-set-key (kbd "s-m") 'evil-jump-item)
 ;; (global-set-key (kbd "s-q") '+workspace/close-window-or-workspace)
 (global-set-key (kbd "s-q") 'delete-window)
-(global-set-key (kbd "s-D") '+default/search-project-for-symbol-at-point)
+(global-set-key (kbd "s-e D") '+default/search-project-for-symbol-at-point)
 (global-set-key (kbd "s-r") '+vertico/search-symbol-at-point)
 (global-set-key (kbd "s-y") 'crux-duplicate-current-line-or-region)
 (global-set-key (kbd "s-Y") 'crux-duplicate-and-comment-current-line-or-region)
-(global-set-key (kbd "s-1") 'delete-other-windows)
-(global-set-key (kbd "s-g") 'magit-status)
+(global-set-key (kbd "s-e 1") 'delete-other-windows)
+(global-set-key (kbd "s-e g") 'magit-status)
 (global-set-key (kbd "s-u") #'+fold/toggle)
 (global-set-key (kbd "s-]") #'indent-rigidly-right-to-tab-stop)
 (global-set-key (kbd "s-[") #'indent-rigidly-left-to-tab-stop)
@@ -279,6 +284,7 @@
 (global-set-key (kbd "M-<left>") 'subword-backward)
 (global-set-key (kbd "M-<right>") 'subword-forward)
 (global-set-key (kbd "S-<return>") 'electric-newline-and-maybe-indent)
+(global-set-key (kbd "C-<return>") 'electric-newline-and-maybe-indent)
 
 ;;; Garbage collect when idle
 
@@ -437,13 +443,13 @@ Version: 2025-02-05"
 ;; (after! drag-stuff
 ;;   (drag-stuff-global-mode -1))
 
-;; Add Homebrew paths to Emacs exec-path so it can find zstd and other tools
-(setenv "PATH" (concat "/opt/homebrew/bin:" (getenv "PATH")))
-(add-to-list 'exec-path "/opt/homebrew/bin")
+;; macOS Homebrew paths (not needed on Linux)
+;; (setenv "PATH" (concat "/opt/homebrew/bin:" (getenv "PATH")))
+;; (add-to-list 'exec-path "/opt/homebrew/bin")
 
 (defun my/vterm-paste-from-clipboard ()
-  "Paste from macOS system clipboard into vterm."
+  "Paste from system clipboard into vterm."
   (interactive)
-  (vterm-send-string (shell-command-to-string "pbpaste")))
+  (vterm-send-string (gui-get-selection 'CLIPBOARD 'STRING)))
 (with-eval-after-load 'vterm
-  (define-key vterm-mode-map (kbd "s-v") #'my/vterm-paste-from-clipboard))
+  (define-key vterm-mode-map (kbd "s-e v") #'my/vterm-paste-from-clipboard))
