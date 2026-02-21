@@ -3,7 +3,7 @@
 ;;; Appearance
 
 (setq doom-theme 'doom-dracula
-      doom-font "Monaco for Powerline:pixelsize=15")
+      doom-font "Monaco for Powerline:pixelsize=14")
 (setq-default line-spacing 3)
 (setq doom-scratch-initial-major-mode 'lisp-interaction-mode)
 (setq display-line-numbers-type nil)
@@ -36,6 +36,9 @@
 (setq super-save-auto-save-when-idle t
       auto-save-default nil)
 
+(setq doom-leader-alt-key "M-SPC"
+      doom-localleader-alt-key "M-SPC m")
+
 ;;; Devil mode
 
 (setq devil-lighter " \U0001F608"
@@ -53,8 +56,6 @@
 (key-chord-define-global "ww" 'switch-to-buffer)
 (key-chord-define-global "JJ" 'crux-switch-to-previous-buffer)
 (key-chord-define-global ";;" 'repeat)
-(setq doom-leader-alt-key "M-SPC"
-      doom-localleader-alt-key "M-SPC m")
 
 ;;; Keybindings — navigation
 
