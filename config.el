@@ -102,7 +102,6 @@
 (global-set-key (kbd "C-c w") 'kill-current-buffer)
 (global-set-key (kbd "C-c y") 'crux-duplicate-current-line-or-region)
 (global-set-key (kbd "C-c Y") 'crux-duplicate-and-comment-current-line-or-region)
-(global-set-key (kbd "C-c 1") 'delete-other-windows)
 (global-set-key (kbd "C-c D") '+default/search-project-for-symbol-at-point)
 (global-set-key (kbd "C-c ]") 'indent-rigidly-right-to-tab-stop)
 (global-set-key (kbd "C-c [") 'indent-rigidly-left-to-tab-stop)
