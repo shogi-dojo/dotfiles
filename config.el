@@ -130,20 +130,6 @@
 
 ;; (add-to-list 'exec-path "/opt/homebrew/bin") ; macOS only
 
-(use-package ultra-scroll
-  ;:load-path "~/code/emacs/ultra-scroll" ; if you git clone'd instead of using vc
-  ;:vc (:url "https://github.com/jdtsmith/ultra-scroll") ; For Emacs>=30
-  :init
-  (setq scroll-conservatively 101 ; important!
-        scroll-margin 0)
-  :config
-  (ultra-scroll-mode 1)
-  (add-hook 'ultra-scroll-hide-functions 'hl-line-mode)
-  (add-hook 'ultra-scroll-hide-functions 'hl-todo-mode)
-  (add-hook 'ultra-scroll-hide-functions 'diff-hl-flydiff-mode)
-  (add-hook 'ultra-scroll-hide-functions 'jit-lock-mode)
-)
-
 
 
 (setq evil-default-state 'emacs)
