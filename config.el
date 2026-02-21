@@ -69,6 +69,7 @@
 
 ;;; Keybindings — editing
 
+(global-set-key (kbd "C-/") 'comment-line)
 (global-set-key (kbd "C-h") 'delete-backward-char)
 (global-set-key (kbd "M-h") 'backward-kill-word)
 (global-set-key (kbd "C-z") 'undo)
