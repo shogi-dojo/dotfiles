@@ -73,8 +73,10 @@
 (global-set-key (kbd "C-/") 'comment-line)
 (global-set-key (kbd "C-h") 'delete-backward-char)
 (global-set-key (kbd "M-h") 'backward-kill-word)
-(global-set-key (kbd "C-z") 'undo)
-(global-set-key (kbd "C-'") 'undo-redo)
+(add-hook 'doom-after-init-hook
+  (lambda ()
+    (global-set-key (kbd "C-z") 'undo)
+    (global-set-key (kbd "C-S-z") 'undo-redo)))
 (global-set-key (kbd "C-.") 'er/expand-region)
 (global-set-key (kbd "C-o") 'crux-smart-open-line-above)
 (global-set-key (kbd "C-m") 'crux-smart-open-line)
