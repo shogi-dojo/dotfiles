@@ -237,9 +237,9 @@
 ;; (global-set-key (kbd "s-c") 'kill-ring-save)
 (map! :nvi "C-e" #'move-end-of-line)
 (setq select-enable-clipboard nil)
-(map! "s-e x" #'clipboard-kill-region)
-(map! "s-e c" #'clipboard-kill-ring-save)
-(map! "s-e v" #'clipboard-yank)
+(map! "C-c x" #'clipboard-kill-region)
+(map! "C-c c" #'clipboard-kill-ring-save)
+(map! "C-c v" #'clipboard-yank)
 ;; (map! "s-g" #'doom/escape)
 ;(map! "s-w" #'kill-current-buffer)
 ;(map! "s-j" #'avy-goto-word-1)
@@ -255,35 +255,33 @@
 (global-set-key (kbd "M-h") 'backward-kill-word)
 (global-set-key (kbd "C-o") 'crux-smart-open-line-above)
 (global-set-key (kbd "C-m") 'crux-smart-open-line)
-(global-set-key (kbd "s-e j") 'crux-top-join-line)
-(global-set-key (kbd "s-e k") 'crux-kill-whole-line)
-(global-set-key (kbd "s-e w") 'kill-current-buffer)
-(global-set-key (kbd "s-e t") 'treemacs)
+(global-set-key (kbd "C-c j") 'crux-top-join-line)
+(global-set-key (kbd "C-c k") 'crux-kill-whole-line)
+(global-set-key (kbd "C-c w") 'kill-current-buffer)
+(global-set-key (kbd "C-c t") 'treemacs)
 (global-set-key (kbd "C-'") 'undo-redo)
-(global-set-key (kbd "s-z") 'undo)
 (global-set-key (kbd "C-z") 'undo)
 (global-set-key (kbd "<Back>") 'crux-switch-to-previous-buffer)
 (global-set-key (kbd "<Reload>") 'revert-buffer)
 
 ;; (global-set-key (kbd "s-m") 'evil-jump-item)
 ;; (global-set-key (kbd "s-q") '+workspace/close-window-or-workspace)
-(global-set-key (kbd "s-q") 'delete-window)
-(global-set-key (kbd "s-e D") '+default/search-project-for-symbol-at-point)
-(global-set-key (kbd "s-r") '+vertico/search-symbol-at-point)
-(global-set-key (kbd "s-y") 'crux-duplicate-current-line-or-region)
-(global-set-key (kbd "s-Y") 'crux-duplicate-and-comment-current-line-or-region)
-(global-set-key (kbd "s-e 1") 'delete-other-windows)
-(global-set-key (kbd "s-e g") 'magit-status)
-(global-set-key (kbd "s-u") #'+fold/toggle)
-(global-set-key (kbd "s-]") #'indent-rigidly-right-to-tab-stop)
-(global-set-key (kbd "s-[") #'indent-rigidly-left-to-tab-stop)
+(global-set-key (kbd "C-c q") 'delete-window)
+(global-set-key (kbd "C-c D") '+default/search-project-for-symbol-at-point)
+(global-set-key (kbd "C-c r") '+vertico/search-symbol-at-point)
+(global-set-key (kbd "C-c y") 'crux-duplicate-current-line-or-region)
+(global-set-key (kbd "C-c Y") 'crux-duplicate-and-comment-current-line-or-region)
+(global-set-key (kbd "C-c 1") 'delete-other-windows)
+(global-set-key (kbd "C-c g") 'magit-status)
+(global-set-key (kbd "C-c u") #'+fold/toggle)
+(global-set-key (kbd "C-c ]") #'indent-rigidly-right-to-tab-stop)
+(global-set-key (kbd "C-c [") #'indent-rigidly-left-to-tab-stop)
 ;; (global-set-key (kbd "s-d") #'evil-ex-search-word-forward)
 (global-set-key (kbd "S-<down-mouse-1>") #'mouse-set-mark)
 (global-set-key [remap dabbrev-expand] 'hippie-expand)
 
 (global-set-key (kbd "M-<left>") 'subword-backward)
 (global-set-key (kbd "M-<right>") 'subword-forward)
-(global-set-key (kbd "S-<return>") 'electric-newline-and-maybe-indent)
 (global-set-key (kbd "C-<return>") 'electric-newline-and-maybe-indent)
 
 ;;; Garbage collect when idle
@@ -351,7 +349,7 @@ Version: 2017-11-01 2023-07-16 2023-11-14"
 ;;   (forward-line arg))
 
 
-(global-set-key (kbd "s-l") 'xah-select-line)
+(global-set-key (kbd "C-c l") 'xah-select-line)
 
 
 (defvar xah-brackets '( "“”" "()" "[]" "{}" "<>" "＜＞" "（）" "［］" "｛｝" "⦅⦆" "〚〛" "⦃⦄" "‹›" "«»" "「」" "〈〉" "《》" "【】" "〔〕" "⦗⦘" "『』" "〖〗" "〘〙" "｢｣" "⟦⟧" "⟨⟩" "⟪⟫" "⟮⟯" "⟬⟭" "⌈⌉" "⌊⌋" "⦇⦈" "⦉⦊" "❛❜" "❝❞" "❨❩" "❪❫" "❴❵" "❬❭" "❮❯" "❰❱" "❲❳" "〈〉" "⦑⦒" "⧼⧽" "﹙﹚" "﹛﹜" "﹝﹞" "⁽⁾" "₍₎" "⦋⦌" "⦍⦎" "⦏⦐" "⁅⁆" "⸢⸣" "⸤⸥" "⟅⟆" "⦓⦔" "⦕⦖" "⸦⸧" "⸨⸩" "｟｠" "||")
@@ -386,7 +384,7 @@ If the buffer isn't visiting a file, show an error message."
         (message "Copied to clipboard: %s" file-path))
     (error "Buffer is not visiting a file")))
 
-(global-set-key (kbd "s-i") 'xah-select-text-in-quote)
+(global-set-key (kbd "C-c i") 'xah-select-text-in-quote)
 
 (defun xah-search-current-word ()
   "Call `isearch' on current word or selection.
@@ -420,7 +418,7 @@ Version: 2025-02-05"
   (define-key minibuffer-local-isearch-map (kbd "<up>") 'isearch-reverse-exit-minibuffer)
   (define-key minibuffer-local-isearch-map (kbd "<down>") 'isearch-forward-exit-minibuffer))
 
-(global-set-key (kbd "s-d") 'xah-search-current-word)
+(global-set-key (kbd "C-c d") 'xah-search-current-word)
 
 ;; (defun move-line-up ()
 ;;   "Move current line up one line."
@@ -452,4 +450,4 @@ Version: 2025-02-05"
   (interactive)
   (vterm-send-string (gui-get-selection 'CLIPBOARD 'STRING)))
 (with-eval-after-load 'vterm
-  (define-key vterm-mode-map (kbd "s-e v") #'my/vterm-paste-from-clipboard))
+  (define-key vterm-mode-map (kbd "C-c v") #'my/vterm-paste-from-clipboard))
