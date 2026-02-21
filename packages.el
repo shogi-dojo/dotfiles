@@ -56,7 +56,7 @@
 (package! typescript-mode)
 (package! crux)
 ;; (package! telega)
-(package! ultra-scroll
-  :recipe (:host github :repo "jdtsmith/ultra-scroll"))
+;; (package! ultra-scroll
+;;   :recipe (:host github :repo "jdtsmith/ultra-scroll"))
 ;; (package! ws-butler
 ;;   :recipe (:host github :repo "lewang/ws-butler"))
