@@ -4,7 +4,7 @@
 
 (setq doom-theme 'doom-dracula
       doom-font "Monaco for Powerline:pixelsize=14")
-(setq-default line-spacing 3)
+(setq-default line-spacing 0)
 (setq doom-scratch-initial-major-mode 'lisp-interaction-mode)
 (setq display-line-numbers-type nil)
 (setq-default cursor-type 'bar)
@@ -173,6 +173,26 @@ If `visual-line-mode' is on, consider line as visual line."
           (clipboard-kill-ring-save (point-min) (point-max)))
         (message "Copied to clipboard: %s" file-path))
     (error "Buffer is not visiting a file")))
+
+;;; File associations
+
+(add-to-list 'auto-mode-alist '("\\.env\\..*\\'" . dotenv-mode))
+
+;;; Smooth touchpad scrolling
+
+(pixel-scroll-precision-mode 1)
+(setq scroll-margin 0)
+(setq jit-lock-defer-time 0.05
+      fast-but-imprecise-scrolling t
+      redisplay-skip-fontification-on-input t)
+(require 'touchpad)
+(setq touchpad-pixel-scroll t)
+(touchpad-scroll-mode 1)
+
+;;; Agent Shell
+
+(require 'acp)
+(require 'agent-shell)
 
 ;;; Vterm
 
