@@ -203,3 +203,44 @@ If `visual-line-mode' is on, consider line as visual line."
 
 (with-eval-after-load 'vterm
   (define-key vterm-mode-map (kbd "C-c v") #'my/vterm-paste-from-clipboard))
+
+;;; Minor modes
+
+(define-minor-mode book-mode
+    "Make current buffer look like a book — black text on white background."
+    :lighter " Book"
+    (if book-mode
+        (progn
+          (face-remap-add-relative 'default
+                                   :background "white"
+                                   :foreground "black")
+          (face-remap-add-relative 'font-lock-keyword-face
+                                   :foreground "black")
+          (face-remap-add-relative 'font-lock-string-face
+                                   :foreground "black")
+          (face-remap-add-relative 'font-lock-comment-face
+                                   :foreground "gray40")
+          (face-remap-add-relative 'font-lock-function-name-face
+                                   :foreground "black")
+          (face-remap-add-relative 'font-lock-variable-name-face
+                                   :foreground "black")
+          (face-remap-add-relative 'font-lock-type-face
+                                   :foreground "black")
+          (face-remap-add-relative 'font-lock-constant-face
+                                   :foreground "black")
+          (face-remap-add-relative 'font-lock-builtin-face
+                                   :foreground "black")
+          (face-remap-add-relative 'hl-line
+                           :background "gray90")
+          (face-remap-add-relative 'cursor
+                           :background "black")
+          (face-remap-add-relative 'region
+                           :background "light blue"
+                           :foreground "black")
+          ;; bigger font for readability
+          (text-scale-set 2))
+      ;; turning off — reset
+      (text-scale-set 0)
+      ;; face remappings are buffer-local and cleared when mode is off
+      (face-remap-reset-base 'default)))
+
