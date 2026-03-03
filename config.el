@@ -12,7 +12,7 @@
 (scroll-bar-mode 1)
 (blink-cursor-mode 1)
 (context-menu-mode 1)
-(tool-bar-mode 1)
+(tool-bar-mode -1)
 
 (setq doom-modeline-icon t
       doom-modeline-major-mode-icon t
@@ -203,6 +203,8 @@ If `visual-line-mode' is on, consider line as visual line."
 
 (with-eval-after-load 'vterm
   (define-key vterm-mode-map (kbd "C-c v") #'my/vterm-paste-from-clipboard))
+
+(setq vterm-max-scrollback 100000)
 
 ;;; Minor modes
 
