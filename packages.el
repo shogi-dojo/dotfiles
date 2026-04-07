@@ -52,6 +52,18 @@
 (package! devil)
 (package! key-chord)
 (package! easy-kill)
+(package! dockerfile-mode)
+(package! dotenv-mode)
+(package! typescript-mode)
 (package! crux)
-(package! ultra-scroll
-  :recipe (:host github :repo "jdtsmith/ultra-scroll"))
+(package! shell-maker)
+(package! acp)
+(package! agent-shell)
+;; (package! touchpad-scroll-mode
+;;   :recipe (:host github :repo "awu7/touchpad-scroll-mode"
+;;            :files ("touchpad.el")))
+;; (package! telega)
+;; (package! ultra-scroll
+;;   :recipe (:host github :repo "jdtsmith/ultra-scroll"))
+;; (package! ws-butler
+;;   :recipe (:host github :repo "lewang/ws-butler"))
