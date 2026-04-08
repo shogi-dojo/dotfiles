@@ -7,6 +7,12 @@
 
 (setq doom-theme 'doom-dracula
       doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 32))
+(add-hook 'after-setting-font-hook
+  (lambda ()
+    (let ((cjk-font (font-spec :family "Noto Sans JP")))
+      (set-fontset-font t 'han cjk-font)
+      (set-fontset-font t 'kana cjk-font)
+      (set-fontset-font t 'cjk-misc cjk-font))))
 (setq-default line-spacing 0)
 (setq doom-scratch-initial-major-mode 'lisp-interaction-mode)
 (setq display-line-numbers-type nil)
