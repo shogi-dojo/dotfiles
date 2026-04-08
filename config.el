@@ -188,6 +188,31 @@ If `visual-line-mode' is on, consider line as visual line."
 
 (add-to-list 'auto-mode-alist '("\\.env\\..*\\'" . dotenv-mode))
 
+;;; DocView high-res rendering
+
+(setq doc-view-resolution 1200)
+
+;;; DOCX support (convert to PDF via pandoc+weasyprint, view in DocView)
+
+(defun my/docx-to-pdf ()
+  "Convert current .docx file to PDF asynchronously and open in DocView."
+  (when (and buffer-file-name (string-match-p "\\.docx\\'" buffer-file-name))
+    (let* ((docx-file buffer-file-name)
+           (pdf-file (concat (file-name-sans-extension docx-file) ".pdf"))
+           (buf (current-buffer)))
+      (message "Converting %s to PDF..." (file-name-nondirectory docx-file))
+      (set-process-sentinel
+       (start-process "docx2pdf" "*docx2pdf*" "pandoc"
+                      docx-file "--pdf-engine=weasyprint" "-o" pdf-file)
+       (lambda (proc event)
+         (when (string-match-p "finished" event)
+           (message "Conversion done. Opening PDF...")
+           (with-current-buffer buf
+             (find-alternate-file pdf-file))))))))
+
+(add-to-list 'auto-mode-alist '("\\.docx\\'" . fundamental-mode))
+(add-hook 'find-file-hook #'my/docx-to-pdf)
+
 ;;; Smooth touchpad scrolling
 
 (pixel-scroll-precision-mode 1)

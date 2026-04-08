@@ -82,6 +82,7 @@ Fonts must be placed in `~/fonts/` **from within the Emacs APK** (not Termux), d
 
 - **JetBrains Mono Nerd Font** — main editor font. Download from [Nerd Fonts releases](https://github.com/ryanoasis/nerd-fonts/releases) (`JetBrainsMono.tar.xz`)
 - **Nerd icons** — run `M-x nerd-icons-install-fonts` from within Emacs
+- **NotoSansJP-TTF.ttf** — CJK font for Japanese/Chinese/Korean characters. Included in `fonts/` directory. **Important:** Emacs Android's `sfntfont-android` driver only supports TrueType outlines (`glyf` tables). Standard Noto CJK fonts use CFF outlines and won't work. This file was converted from CFF→TrueType using fonttools
 
 ### 7. Sync after config changes
 
@@ -91,6 +92,32 @@ After modifying `init.el` or `packages.el`:
 export DOOMDIR=/data/data/org.gnu.emacs/files/.doom.d
 /data/data/org.gnu.emacs/files/.emacs.d/bin/doom sync
 ```
+
+## PDF & DOCX Support
+
+### pdf-tools (sharp PDF rendering)
+
+pdf-tools requires building `epdfinfo` from source on Termux:
+
+```bash
+pkg install autoconf automake binutils clang libpng poppler zlib make xorgproto pkg-config
+cd ~/.emacs.d/.local/straight/build-30.2/pdf-tools/build/server
+autoreconf -i && ./configure && make -j4
+cp epdfinfo ../../
+```
+
+### DOCX viewing
+
+DOCX files are converted to PDF via pandoc+weasyprint (async), then opened in pdf-tools:
+
+```bash
+pkg install pandoc
+pip install weasyprint
+```
+
+## Japanese Input
+
+The `japanese` Doom module is enabled (ddskk). Use `C-\` to toggle input, `C-u C-\` to switch between methods (`japanese`, `japanese-katakana`, etc.).
 
 ## Android-Specific Config Changes
 
