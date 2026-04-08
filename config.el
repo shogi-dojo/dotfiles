@@ -1,5 +1,8 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
+;;; Android — always show on-screen keyboard
+(setq touch-screen-display-keyboard t)
+
 ;;; Appearance
 
 (setq doom-theme 'doom-dracula
@@ -59,9 +62,10 @@
 
 ;;; Keybindings — navigation
 
+(global-set-key (kbd "A-n") '+default/new-buffer)
 (global-set-key (kbd "C-e") 'move-end-of-line)
-(global-set-key (kbd "M-n") 'evil-forward-paragraph)
-(global-set-key (kbd "M-p") 'evil-backward-paragraph)
+(global-set-key (kbd "M-n") 'forward-paragraph)
+(global-set-key (kbd "M-p") 'backward-paragraph)
 (global-set-key (kbd "M-0") 'treemacs-select-window)
 (global-set-key (kbd "M-<left>") 'subword-backward)
 (global-set-key (kbd "M-<right>") 'subword-forward)
