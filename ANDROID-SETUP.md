@@ -133,5 +133,9 @@ The following modules/packages from the linux-config branch were disabled for An
 
 - **"emacs" command not found during `doom install`**: Install Emacs in Termux (`pkg install emacs`)
 - **Font errors ("Wrong type argument: font")**: Font not installed from within Emacs APK — copy via dired from `/sdcard/`
-- **emacsclient "can't find socket"**: Launch Emacs from the app icon, not by opening a file. Run `M-x server-start` after launch
+- **emacsclient "can't find socket"**: The APK's `libemacsclient.so` hardcodes `/data/data/org.gnu.emacs/cache` as its TMPDIR, so it looks for the socket at `/data/data/org.gnu.emacs/cache/emacs<UID>/server`. But `early-init.el` adds Termux to PATH, causing Emacs to pick up Termux's TMPDIR and create the socket at `/data/data/com.termux/files/usr/var/run/emacs<UID>/server` instead. Fix: set `server-socket-dir` in config.el before `server-start`:
+  ```elisp
+  (setq server-socket-dir
+        (format "/data/data/org.gnu.emacs/cache/emacs%d" (user-uid)))
+  ```
 - **Permission issues with config files**: Termux and Emacs APK run as different Android users. Cross-app file access works for `/data/data/org.gnu.emacs/files/` directories but font files specifically need to be owned by the Emacs APK user

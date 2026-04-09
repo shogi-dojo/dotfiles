@@ -9,10 +9,12 @@
       doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 32))
 (add-hook 'after-setting-font-hook
   (lambda ()
-    (let ((cjk-font (font-spec :family "Noto Sans JP")))
+    (let ((cjk-font (font-spec :family "Noto Sans JP"))
+          (nerd-font (font-spec :family "Symbols Nerd Font Mono")))
       (set-fontset-font t 'han cjk-font)
       (set-fontset-font t 'kana cjk-font)
-      (set-fontset-font t 'cjk-misc cjk-font))))
+      (set-fontset-font t 'cjk-misc cjk-font)
+      (set-fontset-font t '(#xf0000 . #xf9999) nerd-font))))
 (setq-default line-spacing 0)
 (setq doom-scratch-initial-major-mode 'lisp-interaction-mode)
 (setq display-line-numbers-type nil)
@@ -35,6 +37,11 @@
 
 ;;; Behavior
 
+;; Place the server socket where the APK's emacsclient expects it:
+;; /data/data/org.gnu.emacs/cache/emacs<UID>/server
+(setq server-socket-dir
+      (format "/data/data/org.gnu.emacs/cache/emacs%d" (user-uid)))
+(add-hook 'doom-after-init-hook #'server-start)
 (setq org-directory "~/org/")
 (setq evil-default-state 'emacs)
 (setq select-enable-clipboard nil)
@@ -50,8 +57,8 @@
 
 ;;; Devil mode
 
-(setq devil-lighter " \U0001F608"
-      devil-prompt "\U0001F608 %t")
+(setq devil-lighter " \U000F0C6F"
+      devil-prompt "\U000F0C6F %t")
 (global-devil-mode)
 
 ;;; Key chords
