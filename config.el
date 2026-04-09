@@ -130,19 +130,17 @@
 
 (add-to-list 'exec-path "/opt/homebrew/bin")
 
-(use-package ultra-scroll
-  ;:load-path "~/code/emacs/ultra-scroll" ; if you git clone'd instead of using vc
-  ;:vc (:url "https://github.com/jdtsmith/ultra-scroll") ; For Emacs>=30
-  :init
-  (setq scroll-conservatively 101 ; important!
-        scroll-margin 0)
+;; Start the Emacs server so `emacsclient` can attach to this GUI instance.
+(use-package! server
   :config
-  (ultra-scroll-mode 1)
-  (add-hook 'ultra-scroll-hide-functions 'hl-line-mode)
-  (add-hook 'ultra-scroll-hide-functions 'hl-todo-mode)
-  (add-hook 'ultra-scroll-hide-functions 'diff-hl-flydiff-mode)
-  (add-hook 'ultra-scroll-hide-functions 'jit-lock-mode)
-)
+  (unless (server-running-p)
+    (server-start)))
+
+;; `ultra-scroll` exercises unusual redisplay paths and is the most likely
+;; culprit for the fullscreen hang. Keep the conservative scrolling settings,
+;; but disable the mode until fullscreen behavior is stable again.
+(setq scroll-conservatively 101
+      scroll-margin 0)
 
 
 
@@ -191,6 +189,7 @@
 (key-chord-define-global ";;" 'repeat)
 (key-chord-define-global "jl" 'avy-goto-line)
 (key-chord-define-global "jk" 'avy-goto-char)
+
 (setq doom-leader-alt-key "M-SPC")
 (setq doom-localleader-alt-key "M-SPC m")
 
