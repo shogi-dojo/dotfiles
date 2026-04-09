@@ -55,6 +55,7 @@
 (package! dockerfile-mode)
 (package! typescript-mode)
 (package! crux)
+(package! dotenv-mode)
 ;; (package! telega)
 (package! ultra-scroll
   :recipe (:host github :repo "jdtsmith/ultra-scroll"))
