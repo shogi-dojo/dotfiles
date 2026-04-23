@@ -100,6 +100,16 @@
 
 (setq-default line-spacing 3)
 
+;; Treemacs: also copy yanked paths to system clipboard
+(after! treemacs
+  (dolist (fn '(treemacs-copy-absolute-path-at-point
+                treemacs-copy-relative-path-at-point
+                treemacs-copy-project-path-at-point))
+    (advice-add fn :after
+      (lambda (&rest _)
+        (when-let ((path (current-kill 0 t)))
+          (gui-set-selection 'CLIPBOARD path))))))
+
 (setq doom-modeline-icon t)
 (setq doom-modeline-major-mode-icon t)
 (setq doom-modeline-major-mode-color-icon t)
