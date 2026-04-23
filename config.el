@@ -407,6 +407,18 @@ If the buffer isn't visiting a file, show an error message."
         (message "Copied to clipboard: %s" file-path))
     (error "Buffer is not visiting a file")))
 
+(defun copy-absolute-file-path-to-clipboard ()
+  "Copy the current buffer's absolute file path to the clipboard.
+If the buffer isn't visiting a file, show an error message."
+  (interactive)
+  (if buffer-file-name
+      (let ((file-path (expand-file-name buffer-file-name)))
+        (with-temp-buffer
+          (insert file-path)
+          (clipboard-kill-ring-save (point-min) (point-max)))
+        (message "Copied to clipboard: %s" file-path))
+    (error "Buffer is not visiting a file")))
+
 (global-set-key (kbd "s-i") 'xah-select-text-in-quote)
 
 (defun xah-search-current-word ()
