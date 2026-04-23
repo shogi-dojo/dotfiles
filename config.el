@@ -248,6 +248,14 @@
 (setq devil-prompt "\U0001F608 %t")
 (global-devil-mode)
 
+;; Also trigger devil with Ukrainian "б" (same physical key as ",")
+(define-key devil-mode-map (kbd "б") #'devil)
+(add-to-list 'devil-special-keys `("б б" . ,(devil-key-executor "б")))
+(setq devil-translations '(("б" . "C-")
+                            (", ," . ",")
+                            ("б б" . "б")
+                            ("," . "C-")))
+
 (delete-selection-mode 1)
 
 ;; (setq telega-use-docker t)
