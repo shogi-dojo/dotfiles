@@ -80,13 +80,23 @@
 ;; Hlissner
 ;;
 (setq doom-theme 'doom-dracula
-      ;; doom-font "Monaco:pixelsize=15"
-      doom-font "Monaco for Powerline:pixelsize=15"
-      ;doom-font (font-spec :family "Monaco for Powerline" :size 15)
-      ;; doom-font (font-spec :size 15)
-      ;; doom-font (font-spec :family "Monaco" :size 15)
-      ;doom-variable-pitch-font (font-spec :family "DejaVu Sans" :size 16)
-      )
+      doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 15))
+
+;; CJK + Nerd icon font setup (matching android-config branch)
+(add-hook 'after-setting-font-hook
+  (lambda ()
+    (let ((cjk-font (font-spec :family "Noto Sans JP"))
+          (nerd-font (font-spec :family "Symbols Nerd Font Mono")))
+      (set-fontset-font t 'han cjk-font)
+      (set-fontset-font t 'kana cjk-font)
+      (set-fontset-font t 'cjk-misc cjk-font)
+      (set-fontset-font t '(#xf0000 . #xf9999) nerd-font))))
+
+;; Org-mode: use Sarasa Mono J for perfect table alignment (monospaced CJK)
+(add-hook 'org-mode-hook
+  (lambda ()
+    (setq-local face-remapping-alist
+                '((default :family "Sarasa Mono J" :height 210)))))
 
 (setq-default line-spacing 3)
 
