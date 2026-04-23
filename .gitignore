@@ -7,3 +7,7 @@
 
 # Emacs lock files
 .#*
+
+# Desktop session files
+.emacs.desktop
+.emacs.desktop.lock
