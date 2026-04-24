@@ -129,6 +129,10 @@ The following modules/packages from the linux-config branch were disabled for An
 | `touchpad-scroll-mode` package | Requires desktop touchpad; crashes on Android |
 | `Monaco for Powerline` font | Replaced with JetBrains Mono Nerd Font (easier to install) |
 
+## Termux Mirror Selection
+
+After a fresh install, Termux may auto-select a slow or unreliable mirror (e.g. a Chinese CDN). Run `termux-change-repo` to pick a closer mirror before installing packages. European mirrors like `grimler.se` or `ftp.fau.de` work well from Ukraine. Large packages like `openjdk-17` (~95 MB) will fail on slow mirrors.
+
 ## Troubleshooting
 
 - **"emacs" command not found during `doom install`**: Install Emacs in Termux (`pkg install emacs`)
