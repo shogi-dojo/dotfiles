@@ -13,7 +13,7 @@ The config uses runtime platform detection in `config.el`, then loads a small pl
 | `platforms/linux.el` | Linux-only server startup, touchpad scrolling, toolbar, and font size |
 | `platforms/android.el` | Android/Termux server socket, touch keyboard, DOCX/PDF setup, scrolling, and font size |
 | `platforms/keybindings-macos.el` | macOS `s-` keybindings and vterm paste via `pbpaste` |
-| `platforms/keybindings-linux.el` | Linux `A-` keybindings and vterm paste via `xclip` |
+| `platforms/keybindings-linux.el` | Linux `C-c` prefix keybindings and vterm paste via `xclip` |
 | `platforms/keybindings-android.el` | Android `A-` keybindings, hardware keys, and vterm clipboard paste |
 | `init.el` | Doom module superset used by all platforms |
 | `packages.el` | Package superset used by all platforms |
@@ -41,10 +41,10 @@ Common bindings live in `config.el`. Platform modifier bindings live in `platfor
 | Platform | System modifier bindings |
 |----------|--------------------------|
 | macOS | `s-` prefix, matching Command-style shortcuts |
-| Linux | `A-` prefix |
+| Linux | `C-c` prefix |
 | Android | `A-` prefix plus `<Back>` and `<Reload>` hardware keys |
 
-Clipboard integration keeps `select-enable-clipboard` disabled, so the Emacs kill ring remains separate from the system clipboard. Use platform bindings such as `s-c`/`s-v` on macOS or `A-c`/`A-v` on Linux and Android for system clipboard operations.
+Clipboard integration keeps `select-enable-clipboard` disabled, so the Emacs kill ring remains separate from the system clipboard. Use platform bindings such as `s-c`/`s-v` on macOS, `C-c c`/`C-c v` on Linux, or `A-c`/`A-v` on Android for system clipboard operations.
 
 ## Editing Guidance
 
