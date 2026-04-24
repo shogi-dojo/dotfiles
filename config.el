@@ -288,4 +288,73 @@ If `visual-line-mode' is on, consider line as visual line."
 
 ;;; Platform keybindings
 
+(defvar my/platform-keybinding-format nil
+  "Format string for platform keybindings, e.g. \"s-%s\" or \"C-c %s\".")
+
+(defvar my/platform-extra-keybinding-keys nil
+  "Platform-specific extra key strings as (ACTION . KEY) pairs.")
+
+(defvar my/vterm-paste-source nil
+  "Clipboard source for vterm paste. Either a shell command string or `gui-selection'.")
+
+(defconst my/platform-keybinding-actions
+  '(("x" . clipboard-kill-region)
+    ("c" . clipboard-kill-ring-save)
+    ("v" . clipboard-yank)
+    ("j" . crux-top-join-line)
+    ("k" . crux-kill-whole-line)
+    ("w" . kill-current-buffer)
+    ("t" . treemacs)
+    ("q" . delete-window)
+    ("D" . +default/search-project-for-symbol-at-point)
+    ("r" . +vertico/search-symbol-at-point)
+    ("y" . crux-duplicate-current-line-or-region)
+    ("Y" . crux-duplicate-and-comment-current-line-or-region)
+    ("1" . delete-other-windows)
+    ("g" . magit-status)
+    ("u" . +fold/toggle)
+    ("]" . indent-rigidly-right-to-tab-stop)
+    ("[" . indent-rigidly-left-to-tab-stop)
+    ("l" . xah-select-line)
+    ("i" . xah-select-text-in-quote)
+    ("d" . xah-search-current-word))
+  "Common platform keybinding actions keyed by platform-specific suffix.")
+
+(defconst my/platform-extra-keybinding-actions
+  '((new-buffer . +default/new-buffer)
+    (previous-buffer . crux-switch-to-previous-buffer)
+    (reload-buffer . revert-buffer))
+  "Extra platform keybinding actions keyed by logical action name.")
+
+(defun my/platform-keybinding (suffix)
+  "Return the platform key string for SUFFIX."
+  (format my/platform-keybinding-format suffix))
+
+(defun my/vterm-paste-from-clipboard ()
+  "Paste from the platform clipboard into vterm."
+  (interactive)
+  (vterm-send-string
+   (or (pcase my/vterm-paste-source
+         ('gui-selection (gui-get-selection 'CLIPBOARD 'STRING))
+         ((pred stringp) (shell-command-to-string my/vterm-paste-source))
+         (_ (user-error "No vterm paste source configured")))
+       "")))
+
+(defun my/apply-platform-keybindings ()
+  "Install platform-specific keybindings from declarative platform config."
+  (when my/platform-keybinding-format
+    (dolist (binding my/platform-keybinding-actions)
+      (global-set-key (kbd (my/platform-keybinding (car binding)))
+                      (cdr binding))))
+  (dolist (binding my/platform-extra-keybinding-keys)
+    (when-let ((command (alist-get (car binding)
+                                   my/platform-extra-keybinding-actions)))
+      (global-set-key (kbd (cdr binding)) command)))
+  (when (and my/platform-keybinding-format my/vterm-paste-source)
+    (with-eval-after-load 'vterm
+      (define-key vterm-mode-map
+                  (kbd (my/platform-keybinding "v"))
+                  #'my/vterm-paste-from-clipboard))))
+
 (load! (format "platforms/keybindings-%s" my/platform))
+(my/apply-platform-keybindings)

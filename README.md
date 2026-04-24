@@ -12,9 +12,9 @@ The config uses runtime platform detection in `config.el`, then loads a small pl
 | `platforms/macos.el` | macOS-only paths, server startup, scrolling, toolbar, and font size |
 | `platforms/linux.el` | Linux-only server startup, touchpad scrolling, toolbar, and font size |
 | `platforms/android.el` | Android/Termux server socket, touch keyboard, DOCX/PDF setup, scrolling, and font size |
-| `platforms/keybindings-macos.el` | macOS `s-` keybindings and vterm paste via `pbpaste` |
-| `platforms/keybindings-linux.el` | Linux `C-c` prefix keybindings and vterm paste via `xclip` |
-| `platforms/keybindings-android.el` | Android `A-` keybindings, hardware keys, and vterm clipboard paste |
+| `platforms/keybindings-macos.el` | macOS keybinding format and vterm paste source |
+| `platforms/keybindings-linux.el` | Linux keybinding format and vterm paste source |
+| `platforms/keybindings-android.el` | Android keybinding format, extra hardware keys, and vterm paste source |
 | `init.el` | Doom module superset used by all platforms |
 | `packages.el` | Package superset used by all platforms |
 | `custom.el` | Emacs Customize output; do not edit manually |
@@ -36,7 +36,7 @@ Each platform file sets `my/font-size` before the common font config runs. Andro
 
 ## Keybindings
 
-Common bindings live in `config.el`. Platform modifier bindings live in `platforms/keybindings-*.el`.
+Common binding actions and installation code live in `config.el`. Platform files only declare key string formats, extra key strings, and vterm paste sources.
 
 | Platform | System modifier bindings |
 |----------|--------------------------|
@@ -48,7 +48,7 @@ Clipboard integration keeps `select-enable-clipboard` disabled, so the Emacs kil
 
 ## Editing Guidance
 
-Put shared behavior in `config.el`. Put OS-specific behavior in `platforms/<platform>.el`. Put modifier-specific keybindings in `platforms/keybindings-<platform>.el`.
+Put shared behavior in `config.el`. Put OS-specific behavior in `platforms/<platform>.el`. Put only platform-specific key strings and clipboard source details in `platforms/keybindings-<platform>.el`.
 
 Changes to `config.el` can usually be reloaded in Emacs. Changes to `init.el` or `packages.el` require:
 

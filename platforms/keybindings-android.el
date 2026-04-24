@@ -1,35 +1,8 @@
 ;;; platforms/keybindings-android.el -*- lexical-binding: t; -*-
 
-(global-set-key (kbd "A-x") 'clipboard-kill-region)
-(global-set-key (kbd "A-c") 'clipboard-kill-ring-save)
-(global-set-key (kbd "A-v") 'clipboard-yank)
-(global-set-key (kbd "A-n") '+default/new-buffer)
-
-(global-set-key (kbd "A-j") 'crux-top-join-line)
-(global-set-key (kbd "A-k") 'crux-kill-whole-line)
-(global-set-key (kbd "A-w") 'kill-current-buffer)
-(global-set-key (kbd "A-t") 'treemacs)
-(global-set-key (kbd "A-q") 'delete-window)
-(global-set-key (kbd "A-D") '+default/search-project-for-symbol-at-point)
-(global-set-key (kbd "A-r") '+vertico/search-symbol-at-point)
-(global-set-key (kbd "A-y") 'crux-duplicate-current-line-or-region)
-(global-set-key (kbd "A-Y") 'crux-duplicate-and-comment-current-line-or-region)
-(global-set-key (kbd "A-1") 'delete-other-windows)
-(global-set-key (kbd "A-g") 'magit-status)
-(global-set-key (kbd "A-u") #'+fold/toggle)
-(global-set-key (kbd "A-]") #'indent-rigidly-right-to-tab-stop)
-(global-set-key (kbd "A-[") #'indent-rigidly-left-to-tab-stop)
-(global-set-key (kbd "A-l") 'xah-select-line)
-(global-set-key (kbd "A-i") 'xah-select-text-in-quote)
-(global-set-key (kbd "A-d") 'xah-search-current-word)
-
-(global-set-key (kbd "<Back>") 'crux-switch-to-previous-buffer)
-(global-set-key (kbd "<Reload>") 'revert-buffer)
-
-(defun my/vterm-paste-from-clipboard ()
-  "Paste from Android system clipboard into vterm."
-  (interactive)
-  (vterm-send-string (gui-get-selection 'CLIPBOARD 'STRING)))
-
-(with-eval-after-load 'vterm
-  (define-key vterm-mode-map (kbd "A-v") #'my/vterm-paste-from-clipboard))
+(setq my/platform-keybinding-format "A-%s"
+      my/vterm-paste-source 'gui-selection
+      my/platform-extra-keybinding-keys
+      '((new-buffer . "A-n")
+        (previous-buffer . "<Back>")
+        (reload-buffer . "<Reload>")))
