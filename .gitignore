@@ -1,0 +1,13 @@
+# Emacs backup files
+*.el~
+*~
+
+# Auto-save files
+\#*\#
+
+# Emacs lock files
+.#*
+
+# Desktop session files
+.emacs.desktop
+.emacs.desktop.lock
