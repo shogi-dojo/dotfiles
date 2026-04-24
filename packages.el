@@ -59,8 +59,8 @@
 (package! shell-maker)
 (package! acp)
 (package! agent-shell)
-(package! touchpad-scroll-mode
-  :recipe (:host github :repo "awu7/touchpad-scroll-mode"
-           :files ("touchpad.el")))
-(package! ultra-scroll
-  :recipe (:host github :repo "jdtsmith/ultra-scroll"))
+;; Linux only
+(when (eq system-type 'gnu/linux)
+  (package! touchpad-scroll-mode
+    :recipe (:host github :repo "awu7/touchpad-scroll-mode"
+             :files ("touchpad.el"))))
