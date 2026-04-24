@@ -282,7 +282,7 @@ If `visual-line-mode' is on, consider line as visual line."
 
 ;;; File associations
 
-(add-to-list 'auto-mode-alist '("\\.env\\..*\\'" . dotenv-mode))
+(add-to-list 'auto-mode-alist '("\\.env\\(?:\\..*\\)?\\'" . dotenv-mode))
 
 ;;; Agent Shell
 
