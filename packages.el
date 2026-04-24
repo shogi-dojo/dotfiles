@@ -56,8 +56,14 @@
 (package! typescript-mode)
 (package! crux)
 (package! dotenv-mode)
-;; (package! telega)
+(package! shell-maker)
+(package! acp)
+(package! agent-shell)
+(package! touchpad-scroll-mode
+  :recipe (:host github :repo "awu7/touchpad-scroll-mode"
+           :files ("touchpad.el")))
 (package! ultra-scroll
   :recipe (:host github :repo "jdtsmith/ultra-scroll"))
+;; (package! telega)
 ;; (package! ws-butler
 ;;   :recipe (:host github :repo "lewang/ws-butler"))
