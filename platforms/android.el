@@ -4,14 +4,7 @@
       my/line-spacing 0
       touch-screen-display-keyboard t
       server-socket-dir (format "/data/data/org.gnu.emacs/cache/emacs%d" (user-uid))
-      scroll-margin 0
-      jit-lock-defer-time 0.05
-      fast-but-imprecise-scrolling t
-      redisplay-skip-fontification-on-input t
-      doc-view-resolution 1200
-      vterm-max-scrollback 100000)
-
-(setq-default line-spacing 0)
+      doc-view-resolution 1200)
 
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode -1))

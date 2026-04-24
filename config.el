@@ -55,11 +55,14 @@
 
 (setq-default cursor-type 'bar
               line-spacing my/line-spacing)
+(setq scroll-margin 0
+      jit-lock-defer-time 0.05
+      fast-but-imprecise-scrolling t
+      redisplay-skip-fontification-on-input t
+      vterm-max-scrollback 100000)
 (blink-cursor-mode 1)
 (when (fboundp 'context-menu-mode)
   (context-menu-mode 1))
-(when (fboundp 'scroll-bar-mode)
-  (scroll-bar-mode 1))
 
 ;;; Behavior
 

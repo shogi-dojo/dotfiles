@@ -2,8 +2,7 @@
 
 (setq my/font-size 15
       mac-right-option-modifier 'meta
-      scroll-conservatively 101
-      scroll-margin 0)
+      scroll-conservatively 101)
 
 (setenv "PATH" (concat "/opt/homebrew/bin:" (getenv "PATH")))
 (add-to-list 'exec-path "/opt/homebrew/bin")

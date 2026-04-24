@@ -64,6 +64,3 @@
            :files ("touchpad.el")))
 (package! ultra-scroll
   :recipe (:host github :repo "jdtsmith/ultra-scroll"))
-;; (package! telega)
-;; (package! ws-butler
-;;   :recipe (:host github :repo "lewang/ws-butler"))
