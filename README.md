@@ -68,3 +68,11 @@ alias ec='emacsclient -n -c -a "emacs"'
 ```
 
 They currently live in `~/.bash_profile`.
+
+## Tests
+
+Run the ERT test suite with:
+
+```bash
+emacs --batch -l ert -l test-config.el -f ert-run-tests-batch-and-exit
+```
