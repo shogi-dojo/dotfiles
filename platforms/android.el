@@ -6,6 +6,14 @@
       server-socket-dir (format "/data/data/org.gnu.emacs/cache/emacs%d" (user-uid))
       doc-view-resolution 1200)
 
+(custom-set-faces!
+  '(default :background "#000000")
+  '(solaire-default-face :background "#000000")
+  '(hl-line :background "#1a1a1a")
+  '(org-block :background "#0a0a0a")
+  '(mode-line :background "#0a0a0a")
+  '(mode-line-inactive :background "#050505"))
+
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode -1))
 (when (fboundp 'pixel-scroll-precision-mode)
@@ -16,6 +24,17 @@
             (require 'server)
             (unless (server-running-p)
               (server-start))))
+
+(after! magit
+  (setq magit-git-executable "/data/data/com.termux/files/usr/bin/git"
+        magit-diff-highlight-indentation nil
+        magit-diff-highlight-trailing nil
+        magit-diff-paint-whitespace nil
+        magit-diff-highlight-hunk-body nil
+        magit-diff-refine-hunk nil)
+  (remove-hook 'magit-status-sections-hook 'magit-insert-tags-header)
+  (remove-hook 'magit-status-sections-hook 'magit-insert-unpushed-to-pushremote)
+  (remove-hook 'magit-status-sections-hook 'magit-insert-unpulled-from-pushremote))
 
 (defun my/docx-to-pdf ()
   "Convert current .docx file to PDF asynchronously and open it."
