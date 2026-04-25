@@ -5,6 +5,7 @@
 (defvar my/platform
   (cond
    ((eq system-type 'darwin) 'macos)
+   ((eq system-type 'android) 'android)
    ((and (eq system-type 'gnu/linux)
          (or (getenv "TERMUX_VERSION")
              (file-directory-p "/data/data/com.termux")))

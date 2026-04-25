@@ -17,9 +17,6 @@
             (unless (server-running-p)
               (server-start))))
 
-(after! ligature
-  (global-ligature-mode -1))
-
 (defun my/docx-to-pdf ()
   "Convert current .docx file to PDF asynchronously and open it."
   (when (and buffer-file-name
