@@ -179,6 +179,33 @@
                   (when-let ((path (current-kill 0 t)))
                     (gui-set-selection 'CLIPBOARD path))))))
 
+;;; EPUB reading
+
+(use-package! nov
+  :mode ("\\.epub\\'" . nov-mode)
+  :config
+  (setq nov-text-width 80)
+  (add-hook 'nov-mode-hook #'visual-line-mode)
+
+  (defun my/nov-tolerate-corrupt-fonts (orig-fn directory filename)
+    "Allow EPUBs with corrupt embedded fonts to open when content extracted."
+    (let ((start (with-current-buffer (get-buffer-create "*nov unzip*")
+                   (point-max-marker)))
+          (status (funcall orig-fn directory filename)))
+      (if (and (integerp status)
+               (> status 1)
+               (nov-epub-valid-p directory)
+               (get-buffer "*nov unzip*")
+               (with-current-buffer "*nov unzip*"
+                 (save-excursion
+                   (goto-char start)
+                   (and (search-forward "invalid compressed data to inflate" nil t)
+                        (search-backward "/Fonts/" start t)))))
+          1
+        status)))
+
+  (advice-add 'nov-unzip-epub :around #'my/nov-tolerate-corrupt-fonts))
+
 ;;; Custom functions
 
 (defun xah-select-line ()

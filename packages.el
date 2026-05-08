@@ -59,6 +59,7 @@
 (package! shell-maker)
 (package! acp)
 (package! agent-shell)
+(package! nov)
 ;; Linux only
 (when (eq system-type 'gnu/linux)
   (package! touchpad-scroll-mode
