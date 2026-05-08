@@ -186,6 +186,9 @@
   :config
   (setq nov-text-width 80)
   (add-hook 'nov-mode-hook #'visual-line-mode)
+  (add-hook 'nov-mode-hook
+            (lambda ()
+              (setq-local header-line-format nil)))
 
   (defun my/nov-tolerate-corrupt-fonts (orig-fn directory filename)
     "Allow EPUBs with corrupt embedded fonts to open when content extracted."
