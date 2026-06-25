@@ -1,0 +1,402 @@
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+
+;;; Platform detection
+
+(defvar my/platform
+  (cond
+   ((eq system-type 'darwin) 'macos)
+   ((eq system-type 'android) 'android)
+   ((and (eq system-type 'gnu/linux)
+         (or (getenv "TERMUX_VERSION")
+             (file-directory-p "/data/data/com.termux")))
+    'android)
+   ((eq system-type 'gnu/linux) 'linux)
+   (t 'linux))
+  "Current platform: macos, linux, or android.")
+
+(defvar my/font-size 15
+  "Default font size. Platform files override this before fonts are configured.")
+
+(defvar my/line-spacing 3
+  "Default line spacing. Platform files can override this before display setup.")
+
+(load! (format "platforms/%s" my/platform))
+
+;;; Appearance
+
+(setq doom-theme 'doom-dracula
+      doom-font (font-spec :family "JetBrainsMono Nerd Font" :size my/font-size))
+
+(add-hook 'after-setting-font-hook
+          (lambda ()
+            (let ((cjk-font (font-spec :family "Noto Sans JP"))
+                  (nerd-font (font-spec :family "Symbols Nerd Font Mono")))
+              (set-fontset-font t 'han cjk-font)
+              (set-fontset-font t 'kana cjk-font)
+              (set-fontset-font t 'cjk-misc cjk-font)
+              (set-fontset-font t '(#xf0000 . #xf9999) nerd-font))))
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (setq-local face-remapping-alist
+                        '((default :family "Sarasa Mono J" :height 210)))))
+
+(setq display-line-numbers-type nil
+      doom-scratch-initial-major-mode 'lisp-interaction-mode
+      evil-emacs-state-cursor '("purple" bar)
+      doom-modeline-icon t
+      doom-modeline-major-mode-icon t
+      doom-modeline-major-mode-color-icon t
+      doom-modeline-lsp-icon t
+      doom-modeline-time-icon t
+      doom-modeline-time-live-icon t
+      doom-modeline-time-analogue-clock t
+      doom-modeline-vcs-max-length 30
+      doom-modeline-buffer-file-name-style 'buffer-name)
+
+(setq-default cursor-type 'bar
+              line-spacing my/line-spacing)
+(setq scroll-margin 0
+      jit-lock-defer-time 0.05
+      fast-but-imprecise-scrolling t
+      redisplay-skip-fontification-on-input t
+      vterm-max-scrollback 100000)
+(blink-cursor-mode 1)
+(when (fboundp 'context-menu-mode)
+  (context-menu-mode 1))
+
+;;; Behavior
+
+(setq org-directory "~/org/"
+      evil-default-state 'emacs
+      select-enable-clipboard nil
+      doom-leader-alt-key "M-SPC"
+      doom-localleader-alt-key "M-SPC m")
+
+(delete-selection-mode 1)
+(global-subword-mode +1)
+(super-save-mode +1)
+(setq super-save-auto-save-when-idle t
+      auto-save-default nil)
+
+(when (eq my/platform 'android)
+  (setq default-input-method "japanese"))
+
+;;; Devil mode
+
+(setq devil-lighter " \U0001F608"
+      devil-prompt "\U0001F608 %t")
+(global-devil-mode)
+
+(when (eq my/platform 'macos)
+  (define-key devil-mode-map (kbd "б") #'devil)
+  (add-to-list 'devil-special-keys `("б б" . ,(devil-key-executor "б")))
+  (setq devil-translations '(("б" . "C-")
+                             (", ," . ",")
+                             ("б б" . "б")
+                             ("," . "C-"))))
+
+;;; Key chords
+
+(key-chord-mode +1)
+(key-chord-define-global "jj" 'avy-goto-word-1)
+(key-chord-define-global "jk" 'avy-goto-char)
+(key-chord-define-global "jl" 'avy-goto-line)
+(key-chord-define-global "xx" 'execute-extended-command)
+(key-chord-define-global "kk" 'projectile-find-file)
+(key-chord-define-global "ww" 'switch-to-buffer)
+(key-chord-define-global "JJ" 'crux-switch-to-previous-buffer)
+(key-chord-define-global ";;" 'repeat)
+
+(when (eq my/platform 'macos)
+  (defvar my/multibyte-chords
+    '((?ц . switch-to-buffer)
+      (?л . projectile-find-file)
+      (?ч . execute-extended-command))
+    "Alist of (CHAR . COMMAND) for double-tap multibyte key chords.")
+
+  (defvar my/multibyte-chord--last-char nil)
+  (defvar my/multibyte-chord--last-time nil)
+
+  (defun my/multibyte-chord-detect ()
+    "Detect double-tap of multibyte characters and run the bound command."
+    (let* ((char last-command-event)
+           (now (float-time))
+           (cmd (alist-get char my/multibyte-chords)))
+      (if (and cmd
+               my/multibyte-chord--last-char
+               (eq char my/multibyte-chord--last-char)
+               my/multibyte-chord--last-time
+               (< (- now my/multibyte-chord--last-time) key-chord-one-key-delay))
+          (progn
+            (delete-char -1)
+            (delete-char -1)
+            (setq my/multibyte-chord--last-char nil
+                  my/multibyte-chord--last-time nil)
+            (call-interactively cmd))
+        (setq my/multibyte-chord--last-char char
+              my/multibyte-chord--last-time now))))
+
+  (add-hook 'post-self-insert-hook #'my/multibyte-chord-detect))
+
+;;; Common keybindings
+
+(global-set-key (kbd "C-e") 'move-end-of-line)
+(global-set-key (kbd "M-n") 'evil-forward-paragraph)
+(global-set-key (kbd "M-p") 'evil-backward-paragraph)
+(global-set-key (kbd "M-0") 'treemacs-select-window)
+(global-set-key (kbd "M-<left>") 'subword-backward)
+(global-set-key (kbd "M-<right>") 'subword-forward)
+
+(global-set-key (kbd "C-/") 'comment-line)
+(global-set-key (kbd "C-h") 'delete-backward-char)
+(global-set-key (kbd "M-h") 'backward-kill-word)
+(global-set-key (kbd "C-.") 'er/expand-region)
+(global-set-key (kbd "C-o") 'crux-smart-open-line-above)
+(global-set-key (kbd "C-m") 'crux-smart-open-line)
+(global-set-key (kbd "C-<return>") 'electric-newline-and-maybe-indent)
+(global-set-key (kbd "S-<down-mouse-1>") 'mouse-set-mark)
+(global-set-key [remap dabbrev-expand] 'hippie-expand)
+
+(add-hook 'doom-after-init-hook
+          (lambda ()
+            (global-set-key (kbd "C-z") 'undo)
+            (global-set-key (kbd "C-S-z") 'undo-redo)))
+
+(define-key isearch-mode-map (kbd "<up>") 'isearch-repeat-backward)
+(define-key isearch-mode-map (kbd "<down>") 'isearch-repeat-forward)
+(define-key minibuffer-local-isearch-map (kbd "<up>") 'isearch-reverse-exit-minibuffer)
+(define-key minibuffer-local-isearch-map (kbd "<down>") 'isearch-forward-exit-minibuffer)
+
+;;; Treemacs
+
+(after! treemacs
+  (dolist (fn '(treemacs-copy-absolute-path-at-point
+                treemacs-copy-relative-path-at-point
+                treemacs-copy-project-path-at-point))
+    (advice-add fn :after
+                (lambda (&rest _)
+                  (when-let ((path (current-kill 0 t)))
+                    (gui-set-selection 'CLIPBOARD path))))))
+
+;;; EPUB reading
+
+(use-package! nov
+  :mode ("\\.epub\\'" . nov-mode)
+  :config
+  (setq nov-text-width t)
+  (add-hook 'nov-mode-hook #'visual-line-mode)
+  (add-hook 'nov-mode-hook
+            (lambda ()
+              (setq-local header-line-format nil)))
+
+  (defun my/nov-tolerate-corrupt-fonts (orig-fn directory filename)
+    "Allow EPUBs with corrupt embedded fonts to open when content extracted."
+    (let ((start (with-current-buffer (get-buffer-create "*nov unzip*")
+                   (point-max-marker)))
+          (status (funcall orig-fn directory filename)))
+      (if (and (integerp status)
+               (> status 1)
+               (nov-epub-valid-p directory)
+               (get-buffer "*nov unzip*")
+               (with-current-buffer "*nov unzip*"
+                 (save-excursion
+                   (goto-char start)
+                   (and (search-forward "invalid compressed data to inflate" nil t)
+                        (search-backward "/Fonts/" start t)))))
+          1
+        status)))
+
+  (advice-add 'nov-unzip-epub :around #'my/nov-tolerate-corrupt-fonts))
+
+;;; Custom functions
+
+(defun xah-select-line ()
+  "Select current line. If region is active, extend selection downward by line.
+If `visual-line-mode' is on, consider line as visual line."
+  (interactive)
+  (if (region-active-p)
+      (if visual-line-mode
+          (let ((xp1 (point)))
+            (end-of-visual-line 1)
+            (when (eq xp1 (point))
+              (end-of-visual-line 2)))
+        (progn
+          (forward-line 1)
+          (end-of-line)))
+    (if visual-line-mode
+        (progn
+          (beginning-of-visual-line)
+          (push-mark (point) t t)
+          (end-of-visual-line))
+      (push-mark (line-beginning-position) t t)
+      (end-of-line))))
+
+(defvar xah-brackets
+  '("“”" "()" "[]" "{}" "<>" "＜＞" "（）" "［］" "｛｝" "⦅⦆" "〚〛"
+    "⦃⦄" "‹›" "«»" "「」" "〈〉" "《》" "【】" "〔〕" "⦗⦘" "『』"
+    "〖〗" "〘〙" "｢｣" "⟦⟧" "⟨⟩" "⟪⟫" "⟮⟯" "⟬⟭" "⌈⌉"
+    "⌊⌋" "⦇⦈" "⦉⦊" "❛❜" "❝❞" "❨❩" "❪❫" "❴❵" "❬❭"
+    "❮❯" "❰❱" "❲❳" "〈〉" "⦑⦒" "⧼⧽" "﹙﹚" "﹛﹜" "﹝﹞"
+    "⁽⁾" "₍₎" "⦋⦌" "⦍⦎" "⦏⦐" "⁅⁆" "⸢⸣" "⸤⸥" "⟅⟆"
+    "⦓⦔" "⦕⦖" "⸦⸧" "⸨⸩" "｟｠" "||")
+  "Matching bracket pairs for `xah-select-text-in-quote'.")
+
+(defun xah-select-text-in-quote ()
+  "Select text between the nearest left and right delimiters."
+  (interactive)
+  (let ((xskipChars (concat "^\"`" (mapconcat #'identity xah-brackets ""))))
+    (skip-chars-backward xskipChars)
+    (push-mark (point) t t)
+    (skip-chars-forward xskipChars)))
+
+(defun xah-search-current-word ()
+  "Call `isearch' on current word or selection."
+  (interactive)
+  (let (xbeg xend)
+    (if (region-active-p)
+        (setq xbeg (region-beginning)
+              xend (region-end))
+      (save-excursion
+        (skip-chars-backward "-_A-Za-z0-9")
+        (setq xbeg (point))
+        (right-char)
+        (skip-chars-forward "-_A-Za-z0-9")
+        (setq xend (point))))
+    (when (< xbeg (point))
+      (goto-char xbeg))
+    (isearch-mode t)
+    (isearch-yank-string (buffer-substring-no-properties xbeg xend))))
+
+(defun copy-relative-file-path-to-clipboard ()
+  "Copy the current buffer's relative file path to the clipboard."
+  (interactive)
+  (if buffer-file-name
+      (let ((file-path (substring (+default/yank-buffer-path (doom-project-root)) 13)))
+        (with-temp-buffer
+          (insert file-path)
+          (clipboard-kill-ring-save (point-min) (point-max)))
+        (message "Copied to clipboard: %s" file-path))
+    (error "Buffer is not visiting a file")))
+
+(defun copy-absolute-file-path-to-clipboard ()
+  "Copy the current buffer's absolute file path to the clipboard."
+  (interactive)
+  (if buffer-file-name
+      (let ((file-path (expand-file-name buffer-file-name)))
+        (with-temp-buffer
+          (insert file-path)
+          (clipboard-kill-ring-save (point-min) (point-max)))
+        (message "Copied to clipboard: %s" file-path))
+    (error "Buffer is not visiting a file")))
+
+(define-minor-mode book-mode
+  "Make current buffer look like a book: black text on white background."
+  :lighter " Book"
+  (if book-mode
+      (progn
+        (face-remap-add-relative 'default :background "white" :foreground "black")
+        (face-remap-add-relative 'font-lock-keyword-face :foreground "black")
+        (face-remap-add-relative 'font-lock-string-face :foreground "black")
+        (face-remap-add-relative 'font-lock-comment-face :foreground "gray40")
+        (face-remap-add-relative 'font-lock-function-name-face :foreground "black")
+        (face-remap-add-relative 'font-lock-variable-name-face :foreground "black")
+        (face-remap-add-relative 'font-lock-type-face :foreground "black")
+        (face-remap-add-relative 'font-lock-constant-face :foreground "black")
+        (face-remap-add-relative 'font-lock-builtin-face :foreground "black")
+        (face-remap-add-relative 'hl-line :background "gray90")
+        (face-remap-add-relative 'cursor :background "black")
+        (face-remap-add-relative 'region :background "light blue" :foreground "black")
+        (text-scale-set 2))
+    (text-scale-set 0)
+    (face-remap-reset-base 'default)))
+
+;;; File associations
+
+(add-to-list 'auto-mode-alist '("\\.env\\(?:\\..*\\)?\\'" . dotenv-mode))
+
+;;; Agent Shell
+
+(require 'acp nil t)
+(require 'agent-shell nil t)
+
+;;; Platform keybindings
+
+(defvar my/platform-keybinding-format nil
+  "Format string for platform keybindings, e.g. \"s-%s\" or \"C-c %s\".")
+
+(defvar my/platform-extra-keybinding-keys nil
+  "Platform-specific extra key strings as (ACTION . KEY) pairs.")
+
+(defvar my/vterm-paste-source nil
+  "Clipboard source for vterm paste. Either a shell command string or `gui-selection'.")
+
+(defconst my/platform-keybinding-actions
+  '(("x" . clipboard-kill-region)
+    ("c" . clipboard-kill-ring-save)
+    ("v" . clipboard-yank)
+    ("j" . crux-top-join-line)
+    ("k" . crux-kill-whole-line)
+    ("w" . kill-current-buffer)
+    ("t" . treemacs)
+    ("q" . delete-window)
+    ("D" . +default/search-project-for-symbol-at-point)
+    ("r" . revert-buffer)
+    ("R" . +vertico/search-symbol-at-point)
+    ("y" . crux-duplicate-current-line-or-region)
+    ("Y" . crux-duplicate-and-comment-current-line-or-region)
+    ("1" . delete-other-windows)
+    ("g" . magit-status)
+    ("u" . +fold/toggle)
+    ("]" . indent-rigidly-right-to-tab-stop)
+    ("[" . indent-rigidly-left-to-tab-stop)
+    ("l" . xah-select-line)
+    ("i" . xah-select-text-in-quote)
+    ("d" . xah-search-current-word))
+  "Common platform keybinding actions keyed by platform-specific suffix.")
+
+(defconst my/platform-extra-keybinding-actions
+  '((new-buffer . +default/new-buffer)
+    (previous-buffer . crux-switch-to-previous-buffer)
+    (reload-buffer . revert-buffer))
+  "Extra platform keybinding actions keyed by logical action name.")
+
+(defun my/platform-keybinding (suffix)
+  "Return the platform key string for SUFFIX."
+  (format my/platform-keybinding-format suffix))
+
+(defun my/vterm-paste-from-clipboard ()
+  "Paste from the platform clipboard into vterm."
+  (interactive)
+  (vterm-send-string
+   (or (pcase my/vterm-paste-source
+         ('gui-selection (gui-get-selection 'CLIPBOARD 'STRING))
+         ((pred stringp) (shell-command-to-string my/vterm-paste-source))
+         (_ (user-error "No vterm paste source configured")))
+       "")))
+
+(defun my/apply-platform-keybindings ()
+  "Install platform-specific keybindings from declarative platform config."
+  (when my/platform-keybinding-format
+    (dolist (binding my/platform-keybinding-actions)
+      (global-set-key (kbd (my/platform-keybinding (car binding)))
+                      (cdr binding))))
+  (dolist (binding my/platform-extra-keybinding-keys)
+    (when-let ((command (alist-get (car binding)
+                                   my/platform-extra-keybinding-actions)))
+      (global-set-key (kbd (cdr binding)) command)))
+  (when (and my/platform-keybinding-format my/vterm-paste-source)
+    (with-eval-after-load 'vterm
+      (define-key vterm-mode-map
+                  (kbd (my/platform-keybinding "v"))
+                  #'my/vterm-paste-from-clipboard))))
+
+(load! (format "platforms/keybindings-%s" my/platform))
+(my/apply-platform-keybindings)
+
+;;; Sublime Text compatibility
+
+(add-to-list 'load-path "/Users/mac/Documents/sublime.el")
+(require 'sublime)
+(setq sublime-apply-font-size nil)
+(sublime-mode 1)
