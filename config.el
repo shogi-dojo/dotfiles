@@ -184,7 +184,7 @@
 (use-package! nov
   :mode ("\\.epub\\'" . nov-mode)
   :config
-  (setq nov-text-width 80)
+  (setq nov-text-width t)
   (add-hook 'nov-mode-hook #'visual-line-mode)
   (add-hook 'nov-mode-hook
             (lambda ()
@@ -393,3 +393,10 @@ If `visual-line-mode' is on, consider line as visual line."
 
 (load! (format "platforms/keybindings-%s" my/platform))
 (my/apply-platform-keybindings)
+
+;;; Sublime Text compatibility
+
+(add-to-list 'load-path "/Users/mac/Documents/sublime.el")
+(require 'sublime)
+(setq sublime-apply-font-size nil)
+(sublime-mode 1)

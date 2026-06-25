@@ -60,6 +60,7 @@
 (package! acp)
 (package! agent-shell)
 (package! nov)
+(package! substitute)
 ;; Linux only
 (when (eq system-type 'gnu/linux)
   (package! touchpad-scroll-mode
