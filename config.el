@@ -11,11 +11,21 @@
              (file-directory-p "/data/data/com.termux")))
     'android)
    ((eq system-type 'gnu/linux) 'linux)
+   ((eq system-type 'windows-nt) 'windows)
    (t 'linux))
-  "Current platform: macos, linux, or android.")
+  "Current platform: macos, linux, windows, or android.")
 
 (defvar my/font-size 15
   "Default font size. Platform files override this before fonts are configured.")
+
+(defvar my/font-family "JetBrainsMono Nerd Font"
+  "Default monospace font family. Platform files may override it.")
+
+(defvar my/cjk-font-family "Noto Sans JP"
+  "Default CJK fallback font family. Platform files may override it.")
+
+(defvar my/org-font-family "Sarasa Mono J"
+  "Default font family for Org buffers. Platform files may override it.")
 
 (defvar my/line-spacing 3
   "Default line spacing. Platform files can override this before display setup.")
@@ -25,11 +35,11 @@
 ;;; Appearance
 
 (setq doom-theme 'doom-dracula
-      doom-font (font-spec :family "JetBrainsMono Nerd Font" :size my/font-size))
+      doom-font (font-spec :family my/font-family :size my/font-size))
 
 (add-hook 'after-setting-font-hook
           (lambda ()
-            (let ((cjk-font (font-spec :family "Noto Sans JP"))
+            (let ((cjk-font (font-spec :family my/cjk-font-family))
                   (nerd-font (font-spec :family "Symbols Nerd Font Mono")))
               (set-fontset-font t 'han cjk-font)
               (set-fontset-font t 'kana cjk-font)
@@ -39,7 +49,7 @@
 (add-hook 'org-mode-hook
           (lambda ()
             (setq-local face-remapping-alist
-                        '((default :family "Sarasa Mono J" :height 210)))))
+                        `((default :family ,my/org-font-family :height 210)))))
 
 (setq display-line-numbers-type nil
       doom-scratch-initial-major-mode 'lisp-interaction-mode
@@ -183,29 +193,46 @@
 
 (use-package! nov
   :mode ("\\.epub\\'" . nov-mode)
+  :init
+  (when IS-WINDOWS
+    ;; Emacs cannot spawn Scoop's shim here (it reports an exec format
+    ;; error), so use the real Info-ZIP executable behind the shim.
+    (setq nov-unzip-program
+          (expand-file-name "scoop/apps/unzip/current/unzip.exe"
+                            (getenv "USERPROFILE"))))
   :config
-  (setq nov-text-width t)
+  (setq nov-text-width t
+        nov-header-line-format nil)
   (add-hook 'nov-mode-hook #'visual-line-mode)
-  (add-hook 'nov-mode-hook
-            (lambda ()
-              (setq-local header-line-format nil)))
 
   (defun my/nov-tolerate-corrupt-fonts (orig-fn directory filename)
     "Allow EPUBs with corrupt embedded fonts to open when content extracted."
-    (let ((start (with-current-buffer (get-buffer-create "*nov unzip*")
-                   (point-max-marker)))
-          (status (funcall orig-fn directory filename)))
-      (if (and (integerp status)
-               (> status 1)
-               (nov-epub-valid-p directory)
-               (get-buffer "*nov unzip*")
-               (with-current-buffer "*nov unzip*"
-                 (save-excursion
-                   (goto-char start)
-                   (and (search-forward "invalid compressed data to inflate" nil t)
-                        (search-backward "/Fonts/" start t)))))
-          1
-        status)))
+    ;; Windows process arguments and working directories can lose Cyrillic
+    ;; characters.  Copy through Emacs' Unicode file API, then give unzip an
+    ;; ASCII path inside nov's temporary extraction directory.
+    (let* ((default-directory (file-name-as-directory directory))
+           (local-filename (if IS-WINDOWS
+                               (expand-file-name "source.epub" directory)
+                             filename))
+           (start (with-current-buffer (get-buffer-create "*nov unzip*")
+                    (point-max-marker))))
+      (when IS-WINDOWS
+        (copy-file filename local-filename t))
+      (unwind-protect
+          (let ((status (funcall orig-fn directory local-filename)))
+            (if (and (integerp status)
+                     (> status 1)
+                     (nov-epub-valid-p directory)
+                     (get-buffer "*nov unzip*")
+                     (with-current-buffer "*nov unzip*"
+                       (save-excursion
+                         (goto-char start)
+                         (and (search-forward "invalid compressed data to inflate" nil t)
+                              (search-backward "/Fonts/" start t)))))
+                1
+              status))
+        (when (and IS-WINDOWS (file-exists-p local-filename))
+          (delete-file local-filename)))))
 
   (advice-add 'nov-unzip-epub :around #'my/nov-tolerate-corrupt-fonts))
 
@@ -396,7 +423,8 @@ If `visual-line-mode' is on, consider line as visual line."
 
 ;;; Sublime Text compatibility
 
-(add-to-list 'load-path "/Users/mac/Documents/sublime.el")
-(require 'sublime)
-(setq sublime-apply-font-size nil)
-(sublime-mode 1)
+(when (eq my/platform 'macos)
+  (add-to-list 'load-path "/Users/mac/Documents/sublime.el")
+  (when (require 'sublime nil t)
+    (setq sublime-apply-font-size nil)
+    (sublime-mode 1)))
