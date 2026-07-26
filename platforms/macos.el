@@ -15,6 +15,17 @@
     (setenv "PATH" (concat path path-separator (or (getenv "PATH") "")))
     (add-to-list 'exec-path path)))
 
+(setq migemo-command "/opt/homebrew/bin/cmigemo"
+      migemo-dictionary "/opt/homebrew/share/migemo/utf-8/migemo-dict")
+
+(let ((homebrew-bash "/opt/homebrew/bin/bash"))
+  (when (file-executable-p homebrew-bash)
+    (setq shell-file-name homebrew-bash
+          explicit-shell-file-name homebrew-bash)
+    (setenv "SHELL" homebrew-bash)
+    (after! bash-completion
+      (setq bash-completion-prog homebrew-bash))))
+
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode 1))
 (when (fboundp 'scroll-bar-mode)
