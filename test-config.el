@@ -33,6 +33,21 @@
                    (t 'linux))
                   'linux)))))
 
+(ert-deftest test-platform-detection-windows ()
+  "On windows-nt, my/platform should be windows."
+  (let ((system-type 'windows-nt))
+    (should (eq (cond
+                 ((eq system-type 'darwin) 'macos)
+                 ((eq system-type 'android) 'android)
+                 ((and (eq system-type 'gnu/linux)
+                       (or (getenv "TERMUX_VERSION")
+                           (file-directory-p "/data/data/com.termux")))
+                  'android)
+                 ((eq system-type 'gnu/linux) 'linux)
+                 ((eq system-type 'windows-nt) 'windows)
+                 (t 'linux))
+                'windows))))
+
 (ert-deftest test-platform-detection-android-env ()
   "On gnu/linux with TERMUX_VERSION env var, my/platform should be android."
   (let ((system-type 'gnu/linux))
@@ -89,6 +104,12 @@
 
 (ert-deftest test-keybinding-format-linux ()
   "Linux keybinding format produces C-c prefixed keys."
+  (let ((my/platform-keybinding-format "C-c %s"))
+    (should (string= (format my/platform-keybinding-format "c") "C-c c"))
+    (should (string= (format my/platform-keybinding-format "D") "C-c D"))))
+
+(ert-deftest test-keybinding-format-windows ()
+  "Windows reuses the Linux C-c keybinding format."
   (let ((my/platform-keybinding-format "C-c %s"))
     (should (string= (format my/platform-keybinding-format "c") "C-c c"))
     (should (string= (format my/platform-keybinding-format "D") "C-c D"))))
@@ -151,9 +172,11 @@
                                       default-directory))))
     (dolist (file '("platforms/macos.el"
                     "platforms/linux.el"
+                    "platforms/windows.el"
                     "platforms/android.el"
                     "platforms/keybindings-macos.el"
                     "platforms/keybindings-linux.el"
+                    "platforms/keybindings-windows.el"
                     "platforms/keybindings-android.el"))
       (should (file-exists-p (expand-file-name file dir))))))
 
@@ -208,9 +231,11 @@
                                       default-directory))))
     (dolist (file '("platforms/macos.el"
                     "platforms/linux.el"
+                    "platforms/windows.el"
                     "platforms/android.el"
                     "platforms/keybindings-macos.el"
                     "platforms/keybindings-linux.el"
+                    "platforms/keybindings-windows.el"
                     "platforms/keybindings-android.el"))
       (with-temp-buffer
         (insert-file-contents (expand-file-name file dir))
@@ -230,6 +255,7 @@
          (common-vars '())
          (platform-files '("platforms/macos.el"
                            "platforms/linux.el"
+                           "platforms/windows.el"
                            "platforms/android.el")))
     ;; Collect variable names from setq forms in config.el
     (with-temp-buffer

@@ -1,6 +1,6 @@
 # Doom Emacs Config
 
-Unified Doom Emacs configuration for macOS, Linux, and Android/Termux.
+Unified Doom Emacs configuration for macOS, Linux, Windows, and Android/Termux.
 
 The config uses runtime platform detection in `config.el`, then loads a small platform overlay from `platforms/`. The goal is one branch and one shared config instead of separate branch-per-platform copies.
 
@@ -11,9 +11,11 @@ The config uses runtime platform detection in `config.el`, then loads a small pl
 | `config.el` | Shared Doom config, common UI, behavior, key chords, functions, and file associations |
 | `platforms/macos.el` | macOS-only paths, server startup, scrolling, toolbar, and font size |
 | `platforms/linux.el` | Linux-only server startup, touchpad scrolling, toolbar, and font size |
+| `platforms/windows.el` | Windows server startup, scrolling, toolbar, and installed-font choices |
 | `platforms/android.el` | Android/Termux server socket, touch keyboard, DOCX/PDF setup, scrolling, and font size |
 | `platforms/keybindings-macos.el` | macOS keybinding format and vterm paste source |
 | `platforms/keybindings-linux.el` | Linux keybinding format and vterm paste source |
+| `platforms/keybindings-windows.el` | Linux-style keybinding format with the native Windows clipboard |
 | `platforms/keybindings-android.el` | Android keybinding format, extra hardware keys, and vterm paste source |
 | `init.el` | Doom module superset used by all platforms |
 | `packages.el` | Package superset used by all platforms |
@@ -31,6 +33,7 @@ The config uses runtime platform detection in `config.el`, then loads a small pl
 | `macos` | `system-type` is `darwin` |
 | `android` | `system-type` is `gnu/linux` and Termux markers are present |
 | `linux` | other `gnu/linux` systems |
+| `windows` | `system-type` is `windows-nt` |
 
 Each platform file sets `my/font-size` before the common font config runs. Android also sets `my/line-spacing` to `0`; other platforms use the common default of `3`.
 
@@ -42,9 +45,10 @@ Common binding actions and installation code live in `config.el`. Platform files
 |----------|--------------------------|
 | macOS | `s-` prefix, matching Command-style shortcuts |
 | Linux | `C-c` prefix |
+| Windows | `C-c` prefix, matching Linux bindings |
 | Android | `A-` prefix plus `<Back>` and `<Reload>` hardware keys |
 
-Clipboard integration keeps `select-enable-clipboard` disabled, so the Emacs kill ring remains separate from the system clipboard. Use platform bindings such as `s-c`/`s-v` on macOS, `C-c c`/`C-c v` on Linux, or `A-c`/`A-v` on Android for system clipboard operations.
+Clipboard integration keeps `select-enable-clipboard` disabled, so the Emacs kill ring remains separate from the system clipboard. Use platform bindings such as `s-c`/`s-v` on macOS, `C-c c`/`C-c v` on Linux and Windows, or `A-c`/`A-v` on Android for system clipboard operations.
 
 ## Editing Guidance
 
@@ -68,6 +72,14 @@ alias ec='emacsclient -n -c -a "emacs"'
 ```
 
 They currently live in `~/.bash_profile`.
+
+### Windows native compilation
+
+The official Emacs 30.2 Windows build can compile packages natively when a
+matching GCC/libgccjit runtime is available before Emacs starts.  With MSYS2,
+add `C:\msys64\mingw64\bin` to the user PATH, then restart Emacs.  Verify both
+loading and compilation with `(native-comp-available-p)` and an actual
+`native-compile` smoke test; detection alone is not sufficient.
 
 ## Tests
 

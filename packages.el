@@ -56,9 +56,12 @@
 (package! typescript-mode)
 (package! crux)
 (package! dotenv-mode)
-(package! shell-maker)
-(package! acp)
-(package! agent-shell)
+(package! shell-maker
+  :recipe (:host github :repo "xenodium/shell-maker"))
+(package! acp
+  :recipe (:host github :repo "xenodium/acp.el"))
+(package! agent-shell
+  :recipe (:host github :repo "xenodium/agent-shell"))
 (package! nov)
 (package! substitute)
 ;; Linux only
