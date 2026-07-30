@@ -213,7 +213,7 @@
   :config
   (setq nov-text-width t
         nov-header-line-format nil)
-  (add-hook 'nov-mode-hook #'ios/reading-mode)
+  (add-hook 'nov-mode-hook #'visual-line-mode)
 
   (defun my/nov-tolerate-corrupt-fonts (orig-fn directory filename)
     "Allow EPUBs with corrupt embedded fonts to open when content extracted."
@@ -327,8 +327,8 @@ If `visual-line-mode' is on, consider line as visual line."
         (message "Copied to clipboard: %s" file-path))
     (error "Buffer is not visiting a file")))
 
-;; `book-mode' replaced by `ios/reading-mode' from platforms/ios/reader.el
-;; (loaded above).  Use M-x ios/reading-mode or C-c r to toggle.
+;; `book-mode' is provided by platforms/ios/reader.el (loaded above), while
+;; `ios/reading-mode' adds the read-only small-screen behavior used on iOS.
 
 ;;; File associations
 

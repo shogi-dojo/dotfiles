@@ -40,9 +40,7 @@
 
 ;; No startup screen; open Books dir.
 (setq inhibit-startup-screen t
-      inhibit-startup-echo-area-message t
-      initial-major-mode 'dired-mode
-      initial-buffer-choice (expand-file-name "~/Books"))
+      inhibit-startup-echo-area-message t)
 
 ;; Sane defaults for a small terminal.
 (setq-default fill-column 80
@@ -69,7 +67,6 @@
 ;;; 3.  Vendor: esxml + nov.el
 ;;; ----------------------------------------------------------------
 
-(require 'esxml)
 (require 'esxml-query)
 (require 'nov)
 
@@ -80,7 +77,7 @@
 (setq nov-text-width          t    ; wrap at window width
       nov-header-line-format  nil  ; no header (reader.el hides it anyway)
       nov-variable-pitch       nil ; use monospace terminal font
-      nov-render-html-function #'nov-render-html-shr
+      nov-render-html-function #'nov-render-html
       shr-use-colors           nil ; don't try to set colours via ANSI
       shr-use-fonts            nil ; no variable-pitch in terminal
       shr-inhibit-images        t  ; no images
@@ -88,7 +85,7 @@
 
 ;; Persistent reading positions via nov-places.
 (setq nov-save-place-file
-      (expand-file-name "~/.emacs.d/ios/nov-places"))
+      (expand-file-name "~/.emacs.d/nov-places"))
 
 ;; Auto-open .epub files with nov-mode.
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
@@ -124,9 +121,6 @@
 ;; C-c r: toggle reading mode from either state.
 (global-set-key (kbd "C-c r") #'ios/reading-mode)
 
-;; e: leave read-only for editing (inside reading-mode buffers).
-(define-key (make-sparse-keymap) (kbd "e") #'ios/reading-mode-leave-edit)
-
 ;; Wire up nov navigation keys.
 (with-eval-after-load 'nov
   (define-key nov-mode-map (kbd "SPC")   #'scroll-up-command)
@@ -137,36 +131,20 @@
   (define-key nov-mode-map (kbd "/")     #'isearch-forward)
   (define-key nov-mode-map (kbd "g")     #'beginning-of-buffer)
   (define-key nov-mode-map (kbd "G")     #'end-of-buffer)
-  (define-key nov-mode-map (kbd "m")     #'ios/reading-mode-toggle-modeline)
-  (define-key nov-mode-map (kbd "e")     #'ios/reading-mode-leave-edit)
   (define-key nov-mode-map (kbd "C-c r") #'ios/reading-mode)
   (define-key nov-mode-map (kbd "q")     #'kill-current-buffer))
 
 ;;; ----------------------------------------------------------------
-;;; 6.  Mode-line toggle helper
+;;; 6.  Startup
 ;;; ----------------------------------------------------------------
 
-(defun ios/reading-mode-toggle-modeline ()
-  "Toggle between the compact progress mode-line and no mode-line."
-  (interactive)
-  (setq-local mode-line-format
-              (if mode-line-format
-                  nil
-                ios/reader-compact-mode-line))
-  (force-mode-line-update))
+(defun ios/open-books-on-empty-startup ()
+  "Open ~/Books only when startup would otherwise show *scratch*."
+  (when (and (null buffer-file-name)
+             (string= (buffer-name) "*scratch*"))
+    (dired (expand-file-name "~/Books"))))
 
-;;; ----------------------------------------------------------------
-;;; 7.  Startup: open ~/Books in Dired
-;;; ----------------------------------------------------------------
-
-(defun ios/open-books-dir ()
-  "Open ~/Books in Dired on startup; create if absent."
-  (let ((books (expand-file-name "~/Books")))
-    (unless (file-directory-p books)
-      (make-directory books t))
-    (dired books)))
-
-(add-hook 'emacs-startup-hook #'ios/open-books-dir)
+(add-hook 'emacs-startup-hook #'ios/open-books-on-empty-startup)
 
 (provide 'ios-init)
 ;;; init.el ends here

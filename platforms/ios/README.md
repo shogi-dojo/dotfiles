@@ -13,6 +13,7 @@ package-manager networking — everything runs from built-ins and vendored Elisp
 | `vendor/nov.el` | EPUB reader — git `874daf5e` from emacsmirror/nov (GPL-3.0+) |
 | `vendor/esxml.el` | XML/S-expression library — git `6a375888` from emacsmirror/esxml (GPL-3.0+) |
 | `vendor/esxml-query.el` | jQuery-style CSS selector for esxml — same commit (GPL-3.0+) |
+| `vendor/LICENSE` | Full GNU GPL version 3 license for the vendored sources |
 | `test-reader.el` | ERT test suite for `reader.el` |
 
 ## Quick start
@@ -29,13 +30,13 @@ The binary at `build/target/src/temacs` is a native arm64 Mach-O that links
 ### 2. Package and install
 
 ```
-make package   # creates build/emacs_30.2-1_iphoneos-arm64.deb
+make package   # creates dist/emacs_30.2-2_iphoneos-arm64.deb
 ```
 
 Copy the `.deb` to your device and install:
 
 ```
-dpkg -i emacs_30.2-1_iphoneos-arm64.deb
+dpkg -i emacs_30.2-2_iphoneos-arm64.deb
 ```
 
 ### 3. Deploy the config
@@ -118,7 +119,7 @@ emacs -Q --batch \
   -f ert-run-tests-batch-and-exit
 ```
 
-Expected: **15 tests, 15 passed**.
+Expected: **18 tests, 18 passed**.
 
 ## Limitations
 

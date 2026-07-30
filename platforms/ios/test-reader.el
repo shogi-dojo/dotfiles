@@ -140,16 +140,23 @@
 ;;; 4.  Leave-edit helper
 ;;; ----------------------------------------------------------------
 
-(ert-deftest ios/reader-test-leave-edit-drops-read-only ()
-  "`ios/reading-mode-leave-edit' clears read-only while mode stays on."
+(ert-deftest ios/reader-test-leave-edit-disables-reader ()
+  "`ios/reading-mode-leave-edit' restores normal editing state."
   (ios/test-with-buffer
     (ios/reading-mode 1)
     (should buffer-read-only)
     (ios/reading-mode-leave-edit)
     (should-not buffer-read-only)
-    ;; Reading mode itself is still on.
-    (should ios/reading-mode)
-    (ios/reading-mode -1)))
+    (should-not ios/reading-mode)))
+
+(ert-deftest ios/reader-test-keymap-has-reading-controls ()
+  "Reading mode exposes the documented single-key controls."
+  (should (eq (lookup-key ios/reading-mode-map (kbd "SPC"))
+              #'scroll-up-command))
+  (should (eq (lookup-key ios/reading-mode-map (kbd "e"))
+              #'ios/reading-mode-leave-edit))
+  (should (eq (lookup-key ios/reading-mode-map (kbd "m"))
+              #'ios/reading-mode-toggle-modeline)))
 
 ;;; ----------------------------------------------------------------
 ;;; 5.  Double-toggle idempotency
@@ -171,6 +178,16 @@
       (should (equal mode-line-format orig-ml))
       (should (eql line-spacing orig-ls)))))
 
+(ert-deftest ios/reader-test-repeated-enable-preserves-original-state ()
+  "Enabling an already-active reader must not overwrite saved state."
+  (ios/test-with-buffer
+    (setq buffer-read-only nil)
+    (ios/reading-mode 1)
+    (ios/reading-mode 1)
+    (ios/reading-mode-leave-edit)
+    (should-not ios/reading-mode)
+    (should-not buffer-read-only)))
+
 ;;; ----------------------------------------------------------------
 ;;; 6.  Vendor loading (sanity check)
 ;;; ----------------------------------------------------------------
@@ -178,6 +195,16 @@
 (ert-deftest ios/reader-test-provider ()
   "reader.el provides the 'reader feature."
   (should (featurep 'reader)))
+
+(ert-deftest ios/reader-test-book-mode-remains-available ()
+  "The existing desktop `book-mode' remains available and reversible."
+  (ios/test-with-buffer
+    (book-mode 1)
+    (should book-mode)
+    (should book-mode--face-cookies)
+    (book-mode -1)
+    (should-not book-mode)
+    (should-not book-mode--face-cookies)))
 
 ;;; ----------------------------------------------------------------
 ;;; Run
