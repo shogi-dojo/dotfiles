@@ -194,6 +194,11 @@
                   (when-let ((path (current-kill 0 t)))
                     (gui-set-selection 'CLIPBOARD path))))))
 
+;;; Portable reading mode
+
+;; Load the Doom-independent reading layer shared with the iOS profile.
+(load! "platforms/ios/reader")
+
 ;;; EPUB reading
 
 (use-package! nov
@@ -208,7 +213,7 @@
   :config
   (setq nov-text-width t
         nov-header-line-format nil)
-  (add-hook 'nov-mode-hook #'visual-line-mode)
+  (add-hook 'nov-mode-hook #'ios/reading-mode)
 
   (defun my/nov-tolerate-corrupt-fonts (orig-fn directory filename)
     "Allow EPUBs with corrupt embedded fonts to open when content extracted."
@@ -322,26 +327,8 @@ If `visual-line-mode' is on, consider line as visual line."
         (message "Copied to clipboard: %s" file-path))
     (error "Buffer is not visiting a file")))
 
-(define-minor-mode book-mode
-  "Make current buffer look like a book: black text on white background."
-  :lighter " Book"
-  (if book-mode
-      (progn
-        (face-remap-add-relative 'default :background "white" :foreground "black")
-        (face-remap-add-relative 'font-lock-keyword-face :foreground "black")
-        (face-remap-add-relative 'font-lock-string-face :foreground "black")
-        (face-remap-add-relative 'font-lock-comment-face :foreground "gray40")
-        (face-remap-add-relative 'font-lock-function-name-face :foreground "black")
-        (face-remap-add-relative 'font-lock-variable-name-face :foreground "black")
-        (face-remap-add-relative 'font-lock-type-face :foreground "black")
-        (face-remap-add-relative 'font-lock-constant-face :foreground "black")
-        (face-remap-add-relative 'font-lock-builtin-face :foreground "black")
-        (face-remap-add-relative 'hl-line :background "gray90")
-        (face-remap-add-relative 'cursor :background "black")
-        (face-remap-add-relative 'region :background "light blue" :foreground "black")
-        (text-scale-set 2))
-    (text-scale-set 0)
-    (face-remap-reset-base 'default)))
+;; `book-mode' replaced by `ios/reading-mode' from platforms/ios/reader.el
+;; (loaded above).  Use M-x ios/reading-mode or C-c r to toggle.
 
 ;;; File associations
 
