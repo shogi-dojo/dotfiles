@@ -92,6 +92,11 @@
 (when (eq my/platform 'android)
   (setq default-input-method "japanese"))
 
+;;; Completion
+
+(after! company
+  (define-key company-active-map (kbd "<escape>") #'company-abort))
+
 ;;; Devil mode
 
 (setq devil-lighter " \U0001F608"
@@ -420,6 +425,17 @@ If `visual-line-mode' is on, consider line as visual line."
 
 (load! (format "platforms/keybindings-%s" my/platform))
 (my/apply-platform-keybindings)
+
+;;; Civet
+
+(use-package! civet-mode
+  :load-path "/Users/mac/projects/emacs/civet-mode"
+  :mode "\\.civet\\'"
+  :hook
+  (civet-mode . (lambda ()
+                  (setq-local treesit-font-lock-level 4)
+                  (when (treesit-parser-list)
+                    (treesit-font-lock-recompute-features)))))
 
 ;;; Sublime Text compatibility
 
